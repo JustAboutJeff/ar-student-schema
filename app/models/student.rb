@@ -1,6 +1,5 @@
 require_relative '../../db/config'
-require 'time'
-require 'date'
+require 'ruby-units'
 
 class Student < ActiveRecord::Base
   def name
@@ -8,8 +7,6 @@ class Student < ActiveRecord::Base
   end
 
   def age
-    d = self.birthday
-    t = Time.now
-    today_convert - birth_convert
+    (Time.now.year - self.birthday.year) - 1
   end
 end
