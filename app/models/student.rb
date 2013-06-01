@@ -1,23 +1,17 @@
 require_relative '../../db/config'
-# require 'ruby-units'
 
 class Student < ActiveRecord::Base
-  validates :email, :uniqueness => true, :format => { :with => /\w+@\w+.\w\w+/}
-  validate :age_greater_than_five
-  validates :phone, :format => { :with => /\d{3}.+\d{3}.+\d{4,}/ }
+  validates_format_of :email, :with => /.+@+.+[\.]+..+/
+  validates_uniqueness_of :email
+  validates_numericality_of :age, :greater_than_or_equal_to => 5
+  validates_format_of :phone, :with => /^[()0-9\-\+\sx]+/
+  validates_length_of :phone, :minimum => 10
 
   def name
     "#{self.first_name} #{self.last_name}"
   end
 
-  def age_greater_than_five
-    if age < 5
-      errors.add(:birthday, "Gotta be 5 to party")
-    end
-  end
-
   def age
-    (Time.now.year - self.birthday.year) - 1
-    # Unit('year').since(self.birthday)
+    @age = Date.today.year - self.birthday.year - ((Date.today.month > self.birthday.month || (Date.today.month == self.birthday.month && Date.today.day >= self.birthday.day)) ? 0 : 1 )
   end
 end
